@@ -27,8 +27,8 @@ task clean(type: Delete) {
 // Define versions in a single place
 ext {
     // Apk version
-    versionCode = 48
-    versionName = "4.8.4"
+    versionCode = 49
+    versionName = "4.8.5"
 
     // Sdk and tools
     minSdkVersion = 16
