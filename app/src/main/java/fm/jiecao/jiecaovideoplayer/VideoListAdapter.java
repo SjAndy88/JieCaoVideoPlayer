@@ -20,7 +20,6 @@ public class VideoListAdapter extends BaseAdapter {
 
     public static final String TAG = "JieCaoVideoPlayer";
 
-    int[] videoIndexs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     Context context;
 
     public VideoListAdapter(Context context) {
@@ -29,7 +28,7 @@ public class VideoListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return videoIndexs.length;
+        return VideoConstant.videoUrls.length;
     }
 
     @Override

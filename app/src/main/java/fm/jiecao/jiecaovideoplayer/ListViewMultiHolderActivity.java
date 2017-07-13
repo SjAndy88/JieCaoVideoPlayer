@@ -43,8 +43,6 @@ public class ListViewMultiHolderActivity extends AppCompatActivity {
 
     public class VideoListAdapter extends BaseAdapter {
 
-        int[] viewtype = {0, 0, 0, 1, 0, 0, 0, 1, 0, 0};//1 = jcvd, 0 = textView
-
         Context context;
         LayoutInflater mInflater;
 
@@ -55,7 +53,7 @@ public class ListViewMultiHolderActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return viewtype.length;
+            return VideoConstant.videoTypes.length;
         }
 
         @Override
@@ -109,7 +107,7 @@ public class ListViewMultiHolderActivity extends AppCompatActivity {
 
         @Override
         public int getItemViewType(int position) {
-            return viewtype[position];
+            return VideoConstant.videoTypes[position];
         }
 
         @Override

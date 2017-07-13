@@ -14,7 +14,6 @@ import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 
 public class RecyclerViewVideoAdapter extends RecyclerView.Adapter<RecyclerViewVideoAdapter.MyViewHolder> {
 
-    int[] videoIndexs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     private Context context;
     public static final String TAG = "RecyclerViewVideoAdapter";
 
@@ -32,7 +31,7 @@ public class RecyclerViewVideoAdapter extends RecyclerView.Adapter<RecyclerViewV
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Log.i(TAG, "onBindViewHolder [" + holder.jcVideoPlayer.hashCode() + "] position=" + position);
+        Log.i(TAG, "onBindViewHolder[" + holder.jcVideoPlayer.hashCode() + "] pos=" + position);
 
         holder.jcVideoPlayer.setUp(
                 VideoConstant.videoUrls[position], JCVideoPlayer.SCREEN_LAYOUT_LIST,
@@ -44,7 +43,7 @@ public class RecyclerViewVideoAdapter extends RecyclerView.Adapter<RecyclerViewV
 
     @Override
     public int getItemCount() {
-        return videoIndexs.length;
+        return VideoConstant.videoUrls.length;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {

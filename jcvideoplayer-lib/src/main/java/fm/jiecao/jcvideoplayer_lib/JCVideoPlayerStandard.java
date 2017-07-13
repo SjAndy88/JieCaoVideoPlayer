@@ -287,7 +287,7 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
     @Override
     protected void switchToFullOrientation(Context context) {
         JCUtils.getAppCompActivity(context)
-                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
     //Unified management Ui

@@ -13,7 +13,7 @@ import android.widget.Button;
  */
 public class AutoTinyActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button normal, list;
+    Button normal, list, recycler;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,9 +26,11 @@ public class AutoTinyActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_auto_tiny);
         normal = (Button) findViewById(R.id.screen_normal);
         list = (Button) findViewById(R.id.screen_list);
+        recycler = (Button) findViewById(R.id.screen_recycler);
 
         normal.setOnClickListener(this);
         list.setOnClickListener(this);
+        recycler.setOnClickListener(this);
 
     }
 
@@ -40,6 +42,9 @@ public class AutoTinyActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.screen_list:
                 startActivity(new Intent(this, AutoTinyListActivity.class));
+                break;
+            case R.id.screen_recycler:
+                startActivity(new Intent(this, AutoTinyRecyclerActivity.class));
                 break;
         }
     }
