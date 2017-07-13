@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -94,7 +95,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tiny_window:
-                mJcVideoPlayerStandard.startWindowTiny();
+                if (mJcVideoPlayerStandard.isPlaying()) {
+                    mJcVideoPlayerStandard.startWindowTiny();
+                } else {
+                    Toast.makeText(this, "Video not playing!", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.auto_tiny_window:
                 startActivity(new Intent(MainActivity.this, AutoTinyActivity.class));

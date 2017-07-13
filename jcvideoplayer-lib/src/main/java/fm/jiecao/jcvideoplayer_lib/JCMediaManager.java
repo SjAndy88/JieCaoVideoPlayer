@@ -45,7 +45,7 @@ public class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPl
     MediaHandler mMediaHandler;
     Handler mainThreadHandler;
 
-    public static JCMediaManager instance() {
+    protected static JCMediaManager instance() {
         if (JCMediaManager == null) {
             JCMediaManager = new JCMediaManager();
         }
