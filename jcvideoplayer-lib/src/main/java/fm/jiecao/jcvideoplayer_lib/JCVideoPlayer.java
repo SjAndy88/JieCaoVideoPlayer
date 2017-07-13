@@ -46,8 +46,8 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
 
     public static final String TAG = "JieCaoVideoPlayer";
 
-    public static final int FULLSCREEN_ID = 33797;
-    public static final int TINY_ID = 33798;
+    public static final int FULLSCREEN_ID = R.id.FULLSCREEN_ID;
+    public static final int TINY_ID = R.id.TINY_ID;
     public static final int THRESHOLD = 80;
     public static final int FULL_SCREEN_NORMAL_DELAY = 500;
 
