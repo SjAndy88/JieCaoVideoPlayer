@@ -18,7 +18,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
                 android:layout_marginTop="18dp"
-                android:text="Standard ui with share button, visible after fullscreen" />
+                android:text="Standard ui with share button, visible after fullscreen"
+                android:layout_marginStart="3dp"/>
 
             <fm.jiecao.jiecaovideoplayer.CustomView.JCVideoPlayerStandardShowShareButtonAfterFullscreen
                 android:id="@+id/custom_videoplayer_standard_with_share_button"
@@ -30,7 +31,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
                 android:layout_marginTop="18dp"
-                android:text="Standard ui show title after fullscreen" />
+                android:text="Standard ui show title after fullscreen"
+                android:layout_marginStart="3dp"/>
 
             <fm.jiecao.jiecaovideoplayer.CustomView.JCVideoPlayerStandardShowTitleAfterFullscreen
                 android:id="@+id/custom_videoplayer_standard_show_title_after_fullscreen"
@@ -42,7 +44,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
                 android:layout_marginTop="18dp"
-                android:text="Standard ui show textureview after auto complete" />
+                android:text="Standard ui show textureview after auto complete"
+                android:layout_marginStart="3dp"/>
 
             <fm.jiecao.jiecaovideoplayer.CustomView.JCVideoPlayerStandardShowTextureViewAfterAutoComplete
                 android:id="@+id/custom_videoplayer_standard_show_textureview_aoto_complete"

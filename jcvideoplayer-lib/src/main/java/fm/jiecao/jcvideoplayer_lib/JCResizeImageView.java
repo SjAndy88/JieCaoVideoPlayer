@@ -2,9 +2,9 @@ package fm.jiecao.jcvideoplayer_lib;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.widget.ImageView;
 
 /**
  * <p>参照Android系统的VideoView的onMeasure方法
@@ -14,7 +14,7 @@ import android.widget.ImageView;
  * Created by Nathen
  * On 2016/06/02 00:01
  */
-public class JCResizeImageView extends ImageView {
+public class JCResizeImageView extends AppCompatImageView {
     protected static final String TAG = "JCResizeImageView";
     protected static final boolean DEBUG = false;
 
@@ -50,6 +50,7 @@ public class JCResizeImageView extends ImageView {
         }
     }
 
+    @SuppressWarnings({"StatementWithEmptyBody", "SuspiciousNameCombination"})
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int viewRotation = (int) getRotation();
@@ -71,7 +72,7 @@ public class JCResizeImageView extends ImageView {
         if (DEBUG) {
             Log.i(TAG, "videoWidth = " + videoWidth + ", " + "videoHeight = " + videoHeight);
             if (videoWidth > 0 && videoHeight > 0) {
-                Log.i(TAG, "videoWidth / videoHeight = " + videoWidth / videoHeight);
+                Log.i(TAG, "videoWidth / videoHeight = " + (float) videoWidth / (float) videoHeight);
             }
         }
 
@@ -138,7 +139,7 @@ public class JCResizeImageView extends ImageView {
         }
         if (DEBUG) {
             Log.i(TAG, "viewWidth = " + width + ", " + "viewHeight = " + height);
-            Log.i(TAG, "viewWidth / viewHeight = " + width / height);
+            Log.i(TAG, "viewWidth / viewHeight = " + (float) width / (float) height);
         }
         setMeasuredDimension(width, height);
     }

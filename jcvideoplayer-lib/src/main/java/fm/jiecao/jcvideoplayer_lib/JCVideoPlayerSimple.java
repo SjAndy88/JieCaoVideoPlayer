@@ -1,6 +1,8 @@
 package fm.jiecao.jcvideoplayer_lib;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SeekBar;
@@ -89,6 +91,28 @@ public class JCVideoPlayerSimple extends JCVideoPlayer {
             }
         }
         super.onProgressChanged(seekBar, progress, fromUser);
+    }
+
+    @Override
+    public void showWifiDialog() {
+        super.showWifiDialog();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(getResources().getString(R.string.tips_not_wifi));
+        builder.setPositiveButton(getResources().getString(R.string.tips_not_wifi_confirm), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                prepareVideo();
+                WIFI_TIP_DIALOG_SHOWED = true;
+            }
+        });
+        builder.setNegativeButton(getResources().getString(R.string.tips_not_wifi_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
     @Override

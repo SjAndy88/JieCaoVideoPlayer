@@ -86,6 +86,7 @@ public class JCResizeTextureView extends TextureView {
         hasUpdated = true;
     }
 
+    @SuppressWarnings({"StatementWithEmptyBody", "SuspiciousNameCombination"})
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int viewRotation = (int) getRotation();
@@ -107,7 +108,7 @@ public class JCResizeTextureView extends TextureView {
         if (DEBUG) {
             Log.i(TAG, "videoWidth = " + videoWidth + ", " + "videoHeight = " + videoHeight);
             if (videoWidth > 0 && videoHeight > 0) {
-                Log.i(TAG, "videoWidth / videoHeight = " + videoWidth / videoHeight);
+                Log.i(TAG, "videoWidth / videoHeight = " + (float) videoWidth / (float) videoHeight);
             }
         }
 
@@ -174,7 +175,7 @@ public class JCResizeTextureView extends TextureView {
         }
         if (DEBUG) {
             Log.i(TAG, "viewWidth = " + width + ", " + "viewHeight = " + height);
-            Log.i(TAG, "viewWidth / viewHeight = " + width / height);
+            Log.i(TAG, "viewWidth / viewHeight = " + (float) width / (float) height);
         }
         setMeasuredDimension(width, height);
     }

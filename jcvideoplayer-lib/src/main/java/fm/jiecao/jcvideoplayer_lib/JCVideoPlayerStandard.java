@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -127,7 +128,6 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
         }
     }
 
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int id = v.getId();
@@ -187,17 +187,15 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
             backPress();
         } else if (i == R.id.back_tiny) {
             if (JCVideoPlayerManager.CURRENT_SCROLL_LISTENER.get() != null) {
-                if (JCVideoPlayerManager.CURRENT_SCROLL_LISTENER.get().getUrl() != JCMediaManager.instance().mediaPlayer.getDataSource()) {
-//                    if (!((JCVideoPlayer) JCVideoPlayerManager.CURRENT_SCROLL_LISTENER.get(0).get()).isShown()) {
+                if (!TextUtils.equals(JCVideoPlayerManager.CURRENT_SCROLL_LISTENER.get().getUrl(),
+                        JCMediaManager.instance().mediaPlayer.getDataSource())) {
                     releaseAllVideos();
                     return;
-//                    }
                 }
             }
             backPress();
         }
     }
-
 
     @Override
     public void showWifiDialog() {
@@ -284,6 +282,12 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
         super.resetProgressAndTime();
         bottomProgressBar.setProgress(0);
         bottomProgressBar.setSecondaryProgress(0);
+    }
+
+    @Override
+    protected void switchToFullOrientation(Context context) {
+        JCUtils.getAppCompActivity(context)
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
     }
 
     //Unified management Ui
@@ -557,21 +561,24 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
             mDialogIcon = ((ImageView) localView.findViewById(R.id.duration_image_tip));
             mProgressDialog = new Dialog(getContext(), R.style.jc_style_dialog_progress);
             mProgressDialog.setContentView(localView);
-            mProgressDialog.getWindow().addFlags(Window.FEATURE_ACTION_BAR);
-            mProgressDialog.getWindow().addFlags(32);
-            mProgressDialog.getWindow().addFlags(16);
-            mProgressDialog.getWindow().setLayout(-2, -2);
-            WindowManager.LayoutParams localLayoutParams = mProgressDialog.getWindow().getAttributes();
-            localLayoutParams.gravity = 49;
-            localLayoutParams.y = getResources().getDimensionPixelOffset(fm.jiecao.jcvideoplayer_lib.R.dimen.jc_progress_dialog_margin_top);
-            mProgressDialog.getWindow().setAttributes(localLayoutParams);
+            Window window = mProgressDialog.getWindow();
+            if (window != null) {
+                window.addFlags(Window.FEATURE_ACTION_BAR);
+                window.addFlags(32);
+                window.addFlags(16);
+                window.setLayout(-2, -2);
+                WindowManager.LayoutParams localLayoutParams = window.getAttributes();
+                localLayoutParams.gravity = 49;
+                localLayoutParams.y = getResources().getDimensionPixelOffset(R.dimen.jc_progress_dialog_margin_top);
+                window.setAttributes(localLayoutParams);
+            }
         }
         if (!mProgressDialog.isShowing()) {
             mProgressDialog.show();
         }
 
         mDialogSeekTime.setText(seekTime);
-        mDialogTotalTime.setText(" / " + totalTime);
+        mDialogTotalTime.setText(String.format(" / %1$s", totalTime));
         mDialogProgressBar.setProgress(totalTimeDuration <= 0 ? 0 : (seekTimePosition * 100 / totalTimeDuration));
         if (deltaX > 0) {
             mDialogIcon.setBackgroundResource(R.drawable.jc_forward_icon);
@@ -601,14 +608,17 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
             mDialogVolumeProgressBar = ((ProgressBar) localView.findViewById(R.id.volume_progressbar));
             mVolumeDialog = new Dialog(getContext(), R.style.jc_style_dialog_progress);
             mVolumeDialog.setContentView(localView);
-            mVolumeDialog.getWindow().addFlags(8);
-            mVolumeDialog.getWindow().addFlags(32);
-            mVolumeDialog.getWindow().addFlags(16);
-            mVolumeDialog.getWindow().setLayout(-2, -2);
-            WindowManager.LayoutParams localLayoutParams = mVolumeDialog.getWindow().getAttributes();
-            localLayoutParams.gravity = 19;
-            localLayoutParams.x = getContext().getResources().getDimensionPixelOffset(R.dimen.jc_volume_dialog_margin_left);
-            mVolumeDialog.getWindow().setAttributes(localLayoutParams);
+            Window window = mVolumeDialog.getWindow();
+            if (window != null) {
+                window.addFlags(8);
+                window.addFlags(32);
+                window.addFlags(16);
+                window.setLayout(-2, -2);
+                WindowManager.LayoutParams localLayoutParams = window.getAttributes();
+                localLayoutParams.gravity = 19;
+                localLayoutParams.x = getContext().getResources().getDimensionPixelOffset(R.dimen.jc_volume_dialog_margin_left);
+                window.setAttributes(localLayoutParams);
+            }
         }
         if (!mVolumeDialog.isShowing()) {
             mVolumeDialog.show();

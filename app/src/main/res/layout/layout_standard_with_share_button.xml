@@ -60,7 +60,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:text="00:00"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:layout_marginStart="16dp"/>
 
         <SeekBar
             android:id="@+id/progress"
@@ -83,7 +84,8 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp"
             android:text="00:00"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:layout_marginEnd="16dp"/>
 
         <ImageView
             android:id="@+id/fullscreen"
@@ -91,7 +93,8 @@
             android:layout_height="fill_parent"
             android:paddingRight="16dp"
             android:scaleType="center"
-            android:src="@drawable/jc_enlarge" />
+            android:src="@drawable/jc_enlarge"
+            android:paddingEnd="16dp"/>
     </LinearLayout>
 
     <ProgressBar
@@ -110,7 +113,8 @@
         android:layout_marginLeft="6dp"
         android:layout_marginTop="6dp"
         android:background="@drawable/jc_click_back_tiny_selector"
-        android:visibility="visible" />
+        android:visibility="visible"
+        android:layout_marginStart="6dp"/>
 
     <RelativeLayout
         android:id="@+id/layout_top"
@@ -125,7 +129,8 @@
             android:layout_height="48dp"
             android:paddingLeft="10dp"
             android:scaleType="centerInside"
-            android:src="@drawable/jc_back" />
+            android:src="@drawable/jc_back"
+            android:paddingStart="10dp"/>
 
         <TextView
             android:id="@+id/title"
@@ -136,7 +141,8 @@
             android:layout_toRightOf="@+id/back"
             android:paddingLeft="10dp"
             android:textColor="@android:color/white"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:paddingStart="10dp"/>
 
         <ImageView
             android:id="@+id/share"

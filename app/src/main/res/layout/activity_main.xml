@@ -19,7 +19,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
                 android:layout_marginTop="18dp"
-                android:text="Base simple ui example" />
+                android:text="Base simple ui example"
+                android:layout_marginStart="3dp"/>
 
             <fm.jiecao.jcvideoplayer_lib.JCVideoPlayerSimple
                 android:id="@+id/simple_demo"
@@ -31,7 +32,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
                 android:layout_marginTop="18dp"
-                android:text="Recommended standard ui example" />
+                android:text="Recommended standard ui example"
+                android:layout_marginStart="3dp"/>
 
             <fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard
                 android:id="@+id/jc_video"

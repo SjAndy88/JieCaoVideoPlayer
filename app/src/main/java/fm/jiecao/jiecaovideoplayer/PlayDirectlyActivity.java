@@ -1,5 +1,6 @@
 package fm.jiecao.jiecaovideoplayer;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -40,7 +41,11 @@ public class PlayDirectlyActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fullscreen:
-                JCVideoPlayerStandard.startFullscreen(this, JCVideoPlayerStandard.class, "http://2449.vod.myqcloud.com/2449_22ca37a6ea9011e5acaaf51d105342e3.f20.mp4", "嫂子辛苦了");
+                JCVideoPlayerStandard.startDirectFullscreen(this,
+                        ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE,
+                        JCVideoPlayerStandard.class,
+                        "http://2449.vod.myqcloud.com/2449_22ca37a6ea9011e5acaaf51d105342e3.f20.mp4",
+                        "嫂子辛苦了");
                 break;
             case R.id.tiny_window:
                 Toast.makeText(PlayDirectlyActivity.this, "Comming Soon", Toast.LENGTH_SHORT).show();
