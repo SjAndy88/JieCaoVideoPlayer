@@ -32,7 +32,7 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
     private static final int HANDLER_RELEASE = 2;
 
     private static volatile JCMediaManager sJCMediaManager;
-    static JCResizeTextureView textureView;
+    static JCResizeTextureView sTextureView;
     IjkMediaPlayer mediaPlayer;
 
     int currentVideoWidth = 0;
@@ -116,7 +116,7 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
                             mainThreadHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    textureView.requestLayout();
+                                    sTextureView.requestLayout();
                                 }
                             });
                         }
@@ -125,7 +125,6 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
                 case HANDLER_RELEASE:
                     mediaPlayer.reset();
                     mediaPlayer.release();
-                    textureView = null;
                     break;
             }
         }
