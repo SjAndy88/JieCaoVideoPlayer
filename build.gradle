@@ -41,7 +41,7 @@ ext {
     junitVersion= '4.12'
 
     // Custom dependencies
-    ijkplayerVersion = '0.7.9'
+    ijkplayerVersion = '0.8.0'
     glideVersion = '3.7.0'
     picassoVersion = '2.5.1'
     frescoVersion = '0.9.0'
