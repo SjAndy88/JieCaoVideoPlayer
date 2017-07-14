@@ -1033,6 +1033,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
         JCUtils.getAppCompActivity(context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
     }
 
+    @SuppressWarnings("RestrictedApi")
     public static void hideSupportActionBar(Context context) {
         if (ACTION_BAR_EXIST) {
             ActionBar ab = JCUtils.getAppCompActivity(context).getSupportActionBar();
@@ -1047,6 +1048,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
         }
     }
 
+    @SuppressWarnings("RestrictedApi")
     public static void showSupportActionBar(Context context) {
         if (ACTION_BAR_EXIST) {
             ActionBar ab = JCUtils.getAppCompActivity(context).getSupportActionBar();
