@@ -66,10 +66,6 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
 
     }
 
-    public boolean isPlaying() {
-        return JCMediaManager.instance().mediaPlayer.isPlaying();
-    }
-
     @Override
     public boolean setUp(String url, int screen, Object... objects) {
         if (objects.length == 0) return false;

@@ -92,6 +92,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
     public TextView currentTimeTextView, totalTimeTextView;
     public ViewGroup textureViewContainer;
     public ViewGroup topContainer, bottomContainer;
+    public JCResizeTextureView textureView;
     public Surface surface;
 
     protected static WeakReference<JCUserAction> JC_USER_EVENT;
@@ -361,17 +362,18 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
         if (textureViewContainer.getChildCount() > 0) {
             textureViewContainer.removeAllViews();
         }
-        JCMediaManager.sTextureView = new JCResizeTextureView(getContext());
-        JCMediaManager.sTextureView.setVideoSize(JCMediaManager.instance().getVideoSize());
-        JCMediaManager.sTextureView.setRotation(JCMediaManager.instance().videoRotation);
-        JCMediaManager.sTextureView.setSurfaceTextureListener(this);
+        textureView = new JCResizeTextureView(getContext());
+        JCMediaManager.instance().setTextureView(textureView);
+        textureView.setVideoSize(JCMediaManager.instance().getVideoSize());
+        textureView.setRotation(JCMediaManager.instance().videoRotation);
+        textureView.setSurfaceTextureListener(this);
 
         FrameLayout.LayoutParams layoutParams =
                 new FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         Gravity.CENTER);
-        textureViewContainer.addView(JCMediaManager.sTextureView, layoutParams);
+        textureViewContainer.addView(textureView, layoutParams);
 
         cacheImageView.setVideoSize(JCMediaManager.instance().getVideoSize());
         cacheImageView.setRotation(JCMediaManager.instance().videoRotation);
@@ -383,7 +385,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
         switch (currentState) {
             case CURRENT_STATE_NORMAL:
                 if (isCurrentMediaListener()) {
-                    if (!isCurrentPlayingUrl(this.url)) {
+                    if (enableTiny && !isCurrentPlayingUrl(this.url)) {
                         Log.e(TAG, "setUiWitStateAndScreen url is not playing, but err to close");
                     }
                     cancelProgressTimer();
@@ -623,7 +625,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
             Log.d(TAG, "MEDIA_INFO_BUFFERING_END");
         } else if (what == IMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED) {
             JCMediaManager.instance().videoRotation = extra;
-            JCMediaManager.sTextureView.setRotation(extra);
+            textureView.setRotation(extra);
             cacheImageView.setRotation(JCMediaManager.instance().videoRotation);
             Log.d(TAG, "MEDIA_INFO_VIDEO_ROTATION_CHANGED");
 
@@ -634,7 +636,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
     @Override
     public void onVideoSizeChanged() {
         Log.i(TAG, "onVideoSizeChanged " + " [" + this.hashCode() + "] ");
-        JCMediaManager.sTextureView.setVideoSize(JCMediaManager.instance().getVideoSize());
+        textureView.setVideoSize(JCMediaManager.instance().getVideoSize());
         cacheImageView.setVideoSize(JCMediaManager.instance().getVideoSize());
     }
 
@@ -664,7 +666,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
         // 如果textureSizeChanged=true，则说明此次Updated事件不是Image更新引起的   应该是TextureSizeChanged引起的 所以不需要更新 cacheImageView
         if (!textureSizeChanged) {
             cacheImageView.setVisibility(INVISIBLE);
-            JCMediaManager.sTextureView.setHasUpdated();
+            textureView.setHasUpdated();
         } else {
             textureSizeChanged = false;
         }
@@ -933,11 +935,14 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
         return TextUtils.equals(url, JCMediaManager.instance().mediaPlayer.getDataSource());
     }
 
+    public final boolean isPlaying() {
+        return JCMediaManager.instance().mediaPlayer.isPlaying();
+    }
+
     public static void releaseAllVideos() {
         Log.d(TAG, "releaseAllVideos");
         JCVideoPlayerManager.completeAll();
         JCMediaManager.instance().releaseMediaPlayer();
-        JCMediaManager.sTextureView = null;
     }
 
     public static void setJcUserAction(JCUserAction jcUserEvent) {
@@ -1082,7 +1087,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
     private void obtainCache() {
         Point videoSize = JCMediaManager.instance().getVideoSize();
         if (videoSize != null) {
-            Bitmap bitmap = JCMediaManager.sTextureView.getBitmap(videoSize.x, videoSize.y);
+            Bitmap bitmap = textureView.getBitmap(videoSize.x, videoSize.y);
             if (bitmap != null) {
                 pauseSwitchCoverBitmap = bitmap;
             }

@@ -34,7 +34,7 @@ public class ListViewNormalActivity extends AppCompatActivity {
         adapterVideoList = new VideoListAdapter(this);
         listView.setAdapter(adapterVideoList);
 
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        sensorManager = (SensorManager) getApplicationContext().getSystemService(SENSOR_SERVICE);
         sensorEventListener = new JCVideoPlayer.JCAutoFullscreenListener();
     }
 

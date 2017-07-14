@@ -9,7 +9,9 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Surface;
+import android.view.TextureView;
 
+import java.lang.ref.WeakReference;
 import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -32,7 +34,7 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
     private static final int HANDLER_RELEASE = 2;
 
     private static volatile JCMediaManager sJCMediaManager;
-    static JCResizeTextureView sTextureView;
+    private WeakReference<TextureView> mTextureViewWeakReference;
     IjkMediaPlayer mediaPlayer;
 
     int currentVideoWidth = 0;
@@ -62,6 +64,10 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
         mediaHandlerThread.start();
         mMediaHandler = new MediaHandler((mediaHandlerThread.getLooper()));
         mainThreadHandler = new Handler();
+    }
+
+    public void setTextureView(TextureView view) {
+        mTextureViewWeakReference = new WeakReference<>(view);
     }
 
     Point getVideoSize() {
@@ -116,7 +122,12 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
                             mainThreadHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    sTextureView.requestLayout();
+                                    if (mTextureViewWeakReference != null) {
+                                        TextureView textureView = mTextureViewWeakReference.get();
+                                        if (textureView != null) {
+                                            textureView.requestLayout();
+                                        }
+                                    }
                                 }
                             });
                         }
