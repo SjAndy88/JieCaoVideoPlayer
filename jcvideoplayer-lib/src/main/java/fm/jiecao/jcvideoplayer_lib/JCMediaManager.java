@@ -22,45 +22,49 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * Created by Nathen
  * On 2015/11/30 15:39
  */
-public class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.OnCompletionListener,
+class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.OnCompletionListener,
         IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnSeekCompleteListener, IMediaPlayer.OnErrorListener,
         IMediaPlayer.OnVideoSizeChangedListener, IMediaPlayer.OnInfoListener {
-    public static String TAG = "JieCaoVideoPlayer";
+    private static final String TAG = "JieCaoVideoPlayer";
 
-    private static JCMediaManager JCMediaManager;
-    public IjkMediaPlayer mediaPlayer;
-    public static JCResizeTextureView textureView;
+    private static final int HANDLER_PREPARE = 0;
+    private static final int HANDLER_DISPLAY = 1;
+    private static final int HANDLER_RELEASE = 2;
 
-    public int currentVideoWidth = 0;
-    public int currentVideoHeight = 0;
-    public int lastState;
-    public int bufferPercent;
-    public int backUpBufferState = -1;
-    public int videoRotation;
+    private static volatile JCMediaManager sJCMediaManager;
+    static JCResizeTextureView textureView;
+    IjkMediaPlayer mediaPlayer;
 
-    public static final int HANDLER_PREPARE = 0;
-    public static final int HANDLER_SETDISPLAY = 1;
-    public static final int HANDLER_RELEASE = 2;
-    HandlerThread mMediaHandlerThread;
-    MediaHandler mMediaHandler;
-    Handler mainThreadHandler;
+    int currentVideoWidth = 0;
+    int currentVideoHeight = 0;
+    int lastState;
+    int bufferPercent;
+    int backUpBufferState = -1;
+    int videoRotation;
 
-    protected static JCMediaManager instance() {
-        if (JCMediaManager == null) {
-            JCMediaManager = new JCMediaManager();
+    private MediaHandler mMediaHandler;
+    private Handler mainThreadHandler;
+
+    static JCMediaManager instance() {
+        if (sJCMediaManager == null) {
+            synchronized (JCMediaManager.class) {
+                if (sJCMediaManager == null) {
+                    sJCMediaManager = new JCMediaManager();
+                }
+            }
         }
-        return JCMediaManager;
+        return sJCMediaManager;
     }
 
-    public JCMediaManager() {
+    private JCMediaManager() {
         mediaPlayer = new IjkMediaPlayer();
-        mMediaHandlerThread = new HandlerThread(TAG);
-        mMediaHandlerThread.start();
-        mMediaHandler = new MediaHandler((mMediaHandlerThread.getLooper()));
+        HandlerThread mediaHandlerThread = new HandlerThread(TAG);
+        mediaHandlerThread.start();
+        mMediaHandler = new MediaHandler((mediaHandlerThread.getLooper()));
         mainThreadHandler = new Handler();
     }
 
-    public Point getVideoSize() {
+    Point getVideoSize() {
         if (currentVideoWidth != 0 && currentVideoHeight != 0) {
             return new Point(currentVideoWidth, currentVideoHeight);
         } else {
@@ -68,8 +72,9 @@ public class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPl
         }
     }
 
-    public class MediaHandler extends Handler {
-        public MediaHandler(Looper looper) {
+    private class MediaHandler extends Handler {
+
+        MediaHandler(Looper looper) {
             super(looper);
         }
 
@@ -100,7 +105,7 @@ public class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPl
                         e.printStackTrace();
                     }
                     break;
-                case HANDLER_SETDISPLAY:
+                case HANDLER_DISPLAY:
                     if (msg.obj == null) {
                         instance().mediaPlayer.setSurface(null);
                     } else {
@@ -126,24 +131,23 @@ public class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPl
     }
 
 
-    public void prepare(final String url, final Map<String, String> mapHeadData, boolean loop) {
+    void prepare(final String url, final Map<String, String> mapHeadData, boolean loop) {
         if (TextUtils.isEmpty(url)) return;
         Message msg = new Message();
         msg.what = HANDLER_PREPARE;
-        FuckBean fb = new FuckBean(url, mapHeadData, loop);
-        msg.obj = fb;
+        msg.obj = new FuckBean(url, mapHeadData, loop);
         mMediaHandler.sendMessage(msg);
     }
 
-    public void releaseMediaPlayer() {
+    void releaseMediaPlayer() {
         Message msg = new Message();
         msg.what = HANDLER_RELEASE;
         mMediaHandler.sendMessage(msg);
     }
 
-    public void setDisplay(Surface holder) {
+    void setDisplay(Surface holder) {
         Message msg = new Message();
-        msg.what = HANDLER_SETDISPLAY;
+        msg.what = HANDLER_DISPLAY;
         msg.obj = holder;
         mMediaHandler.sendMessage(msg);
     }
@@ -153,8 +157,9 @@ public class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPl
         mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (JCVideoPlayerManager.getFirst() != null) {
-                    JCVideoPlayerManager.getFirst().onPrepared();
+                JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
+                if (first != null) {
+                    first.onPrepared();
                 }
             }
         });
@@ -165,8 +170,9 @@ public class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPl
         mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (JCVideoPlayerManager.getFirst() != null) {
-                    JCVideoPlayerManager.getFirst().onAutoCompletion();
+                JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
+                if (first != null) {
+                    first.onAutoCompletion();
                 }
             }
         });
@@ -177,8 +183,9 @@ public class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPl
         mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (JCVideoPlayerManager.getFirst() != null) {
-                    JCVideoPlayerManager.getFirst().onBufferingUpdate(percent);
+                JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
+                if (first != null) {
+                    first.onBufferingUpdate(percent);
                 }
             }
         });
@@ -189,8 +196,9 @@ public class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPl
         mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (JCVideoPlayerManager.getFirst() != null) {
-                    JCVideoPlayerManager.getFirst().onSeekComplete();
+                JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
+                if (first != null) {
+                    first.onSeekComplete();
                 }
             }
         });
@@ -201,8 +209,9 @@ public class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPl
         mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (JCVideoPlayerManager.getFirst() != null) {
-                    JCVideoPlayerManager.getFirst().onError(what, extra);
+                JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
+                if (first != null) {
+                    first.onError(what, extra);
                 }
             }
         });
@@ -214,8 +223,9 @@ public class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPl
         mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (JCVideoPlayerManager.getFirst() != null) {
-                    JCVideoPlayerManager.getFirst().onInfo(what, extra);
+                JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
+                if (first != null) {
+                    first.onInfo(what, extra);
                 }
             }
         });
@@ -229,8 +239,9 @@ public class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPl
         mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (JCVideoPlayerManager.getFirst() != null) {
-                    JCVideoPlayerManager.getFirst().onVideoSizeChanged();
+                JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
+                if (first != null) {
+                    first.onVideoSizeChanged();
                 }
             }
         });
