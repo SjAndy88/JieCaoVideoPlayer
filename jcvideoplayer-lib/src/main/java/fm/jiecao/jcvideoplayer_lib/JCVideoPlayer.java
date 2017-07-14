@@ -398,7 +398,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
     public void startProgressTimer() {
         cancelProgressTimer();
         UPDATE_PROGRESS_TIMER = new Timer();
-        mProgressTimerTask = new ProgressTimerTask(mHandler, this);
+        mProgressTimerTask = new ProgressTimerTask(this);
         UPDATE_PROGRESS_TIMER.schedule(mProgressTimerTask, 0, 300);
     }
 
@@ -772,13 +772,11 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
         }
     }
 
-    public class ProgressTimerTask extends TimerTask {
+    private class ProgressTimerTask extends TimerTask {
 
-        WeakReference<Handler> mHandlerWeakReference;
         WeakReference<JCVideoPlayer> mJCVideoPlayerWeakReference;
 
-        public ProgressTimerTask(Handler handler, JCVideoPlayer jcVideoPlayer) {
-            mHandlerWeakReference = new WeakReference<>(handler);
+        ProgressTimerTask(JCVideoPlayer jcVideoPlayer) {
             mJCVideoPlayerWeakReference = new WeakReference<>(jcVideoPlayer);
         }
 
@@ -792,7 +790,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
                     int position = jcVideoPlayer.getCurrentPositionWhenPlaying();
                     int duration = jcVideoPlayer.getDuration();
                     Log.v(TAG, "onProgressUpdate " + position + "/" + duration + " [" + this.hashCode() + "] ");
-                    Handler handler = mHandlerWeakReference.get();
+                    Handler handler = jcVideoPlayer.mHandler;
                     if (handler != null) {
                         handler.post(new Runnable() {
                             @Override
