@@ -29,7 +29,7 @@ public class AutoTinyRecyclerActivity extends AppCompatActivity{
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapterVideoList = new RecyclerViewVideoAdapter(this);
+        adapterVideoList = new RecyclerViewVideoAdapter(this, true);
         recyclerView.setAdapter(adapterVideoList);
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

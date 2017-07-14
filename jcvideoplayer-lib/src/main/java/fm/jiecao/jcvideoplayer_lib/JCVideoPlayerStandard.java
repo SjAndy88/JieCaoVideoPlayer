@@ -82,9 +82,11 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
             } else if (currentScreen == SCREEN_LAYOUT_NORMAL
                     || currentScreen == SCREEN_LAYOUT_LIST) {
                 fullscreenButton.setImageResource(R.drawable.jc_enlarge);
-                backButton.setVisibility(View.GONE);
+                backButton.setVisibility(View.INVISIBLE);
                 tinyBackImageView.setVisibility(View.INVISIBLE);
             } else if (currentScreen == SCREEN_WINDOW_TINY) {
+                backButton.setVisibility(View.INVISIBLE);
+                titleTextView.setVisibility(View.INVISIBLE);
                 tinyBackImageView.setVisibility(View.VISIBLE);
                 setAllControlsVisible(View.INVISIBLE, View.INVISIBLE, View.INVISIBLE,
                         View.INVISIBLE, View.INVISIBLE, View.INVISIBLE, View.INVISIBLE);
@@ -188,7 +190,9 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
         } else if (i == R.id.surface_container) {
             startDismissControlViewTimer();
         } else if (i == R.id.back) {
-            backPress();
+            if (!backPress()) {
+                this.release();
+            }
         } else if (i == R.id.back_tiny) {
             JCMediaPlayerListener listener = JCVideoPlayerManager.getScrollListener();
             if (listener != null && !isCurrentPlayingUrl(listener.getUrl())) {

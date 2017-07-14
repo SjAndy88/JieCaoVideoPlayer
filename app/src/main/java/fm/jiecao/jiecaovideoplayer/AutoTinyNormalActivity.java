@@ -42,6 +42,7 @@ public class AutoTinyNormalActivity extends AppCompatActivity implements AbsList
         listView.addHeaderView(headerLayout);
 
         JCVideoPlayerStandard jcVideoPlayerStandard = (JCVideoPlayerStandard) headerLayout.findViewById(R.id.jc_video);
+        jcVideoPlayerStandard.setEnableTiny(true);
         jcVideoPlayerStandard.setUp("http://2449.vod.myqcloud.com/2449_22ca37a6ea9011e5acaaf51d105342e3.f20.mp4"
                 , JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "嫂子坐这");
         Picasso.with(this)

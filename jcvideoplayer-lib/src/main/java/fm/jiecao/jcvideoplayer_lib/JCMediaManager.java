@@ -125,6 +125,7 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
                 case HANDLER_RELEASE:
                     mediaPlayer.reset();
                     mediaPlayer.release();
+                    textureView = null;
                     break;
             }
         }

@@ -28,7 +28,7 @@ public class AutoTinyListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_listview_content);
 
         listView = (ListView) findViewById(R.id.listview);
-        adapterVideoList = new VideoListAdapter(this);
+        adapterVideoList = new VideoListAdapter(this, true);
         listView.setAdapter(adapterVideoList);
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override

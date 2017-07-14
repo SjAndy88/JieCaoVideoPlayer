@@ -15,10 +15,16 @@ import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 public class RecyclerViewVideoAdapter extends RecyclerView.Adapter<RecyclerViewVideoAdapter.MyViewHolder> {
 
     private Context context;
+    private boolean enableTiny;
     public static final String TAG = "RecyclerViewVideoAdapter";
 
     public RecyclerViewVideoAdapter(Context context) {
         this.context = context;
+    }
+
+    public RecyclerViewVideoAdapter(Context context, boolean enableTiny) {
+        this.context = context;
+        this.enableTiny = enableTiny;
     }
 
     @Override
@@ -33,6 +39,7 @@ public class RecyclerViewVideoAdapter extends RecyclerView.Adapter<RecyclerViewV
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Log.i(TAG, "onBindViewHolder[" + holder.jcVideoPlayer.hashCode() + "] pos=" + position);
 
+        holder.jcVideoPlayer.setEnableTiny(enableTiny);
         holder.jcVideoPlayer.setUp(
                 VideoConstant.videoUrls[position], JCVideoPlayer.SCREEN_LAYOUT_LIST,
                 VideoConstant.videoTitles[position]);

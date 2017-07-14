@@ -22,8 +22,15 @@ public class VideoListAdapter extends BaseAdapter {
 
     Context context;
 
+    boolean enableTiny;
+
     public VideoListAdapter(Context context) {
         this.context = context;
+    }
+
+    public VideoListAdapter(Context context, boolean enableTiny) {
+        this.context = context;
+        this.enableTiny = enableTiny;
     }
 
     @Override
@@ -51,6 +58,7 @@ public class VideoListAdapter extends BaseAdapter {
             LayoutInflater mInflater = LayoutInflater.from(context);
             convertView = mInflater.inflate(R.layout.item_videoview, null);
             viewHolder.jcVideoPlayer = (JCVideoPlayerStandard) convertView.findViewById(R.id.videoplayer);
+            viewHolder.jcVideoPlayer.setEnableTiny(enableTiny);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
