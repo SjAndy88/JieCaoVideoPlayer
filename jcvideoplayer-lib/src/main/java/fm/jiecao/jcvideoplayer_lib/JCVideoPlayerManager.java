@@ -1,5 +1,7 @@
 package fm.jiecao.jcvideoplayer_lib;
 
+import android.support.annotation.NonNull;
+
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 
@@ -10,26 +12,27 @@ import java.util.LinkedList;
  */
 public class JCVideoPlayerManager {
 
-    public static WeakReference<JCMediaPlayerListener> CURRENT_SCROLL_LISTENER;
-    public static LinkedList<WeakReference<JCMediaPlayerListener>> LISTENER_LIST = new LinkedList<>();
+    private static WeakReference<JCMediaPlayerListener> CURRENT_SCROLL_LISTENER;
+    static LinkedList<WeakReference<JCMediaPlayerListener>> LISTENER_LIST = new LinkedList<>();
 
-    public static void putScrollListener(JCMediaPlayerListener listener) {
+    static void putScrollListener(@NonNull JCMediaPlayerListener listener) {
         if (listener.getScreenType() == JCVideoPlayer.SCREEN_WINDOW_TINY ||
                 listener.getScreenType() == JCVideoPlayer.SCREEN_WINDOW_FULLSCREEN) return;
         CURRENT_SCROLL_LISTENER = new WeakReference<>(listener);//每次setUp的时候都应该add
     }
-    public static JCMediaPlayerListener getScrollListener() {
+
+    static JCMediaPlayerListener getScrollListener() {
         if (JCVideoPlayerManager.CURRENT_SCROLL_LISTENER != null) {
             return CURRENT_SCROLL_LISTENER.get();
         }
         return null;
     }
 
-    public static void putListener(JCMediaPlayerListener listener) {
+    static void putListener(@NonNull JCMediaPlayerListener listener) {
         LISTENER_LIST.push(new WeakReference<>(listener));
     }
 
-    public static void checkAndPutListener(JCMediaPlayerListener listener) {
+    static void checkAndPutListener(@NonNull JCMediaPlayerListener listener) {
         if (listener.getScreenType() == JCVideoPlayer.SCREEN_WINDOW_TINY ||
                 listener.getScreenType() == JCVideoPlayer.SCREEN_WINDOW_FULLSCREEN) return;
         int location = -1;
@@ -50,7 +53,7 @@ public class JCVideoPlayerManager {
         }
     }
 
-    public static JCMediaPlayerListener popListener() {
+    static JCMediaPlayerListener popListener() {
         if (LISTENER_LIST.size() == 0) {
             return null;
         }
@@ -64,7 +67,7 @@ public class JCVideoPlayerManager {
         return LISTENER_LIST.getFirst().get();
     }
 
-    public static void completeAll() {
+    static void completeAll() {
         JCMediaPlayerListener ll = popListener();
         while (ll != null) {
             ll.onCompletion();

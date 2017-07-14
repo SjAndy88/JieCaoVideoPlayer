@@ -190,12 +190,10 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
         } else if (i == R.id.back) {
             backPress();
         } else if (i == R.id.back_tiny) {
-            if (JCVideoPlayerManager.CURRENT_SCROLL_LISTENER.get() != null) {
-                if (!TextUtils.equals(JCVideoPlayerManager.CURRENT_SCROLL_LISTENER.get().getUrl(),
-                        JCMediaManager.instance().mediaPlayer.getDataSource())) {
-                    releaseAllVideos();
-                    return;
-                }
+            JCMediaPlayerListener listener = JCVideoPlayerManager.getScrollListener();
+            if (listener != null && !isCurrentPlayingUrl(listener.getUrl())) {
+                releaseAllVideos();
+                return;
             }
             backPress();
         }

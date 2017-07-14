@@ -153,7 +153,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
         JCVideoPlayerManager.checkAndPutListener(this);
         if (this == JCVideoPlayerManager.getScrollListener()) {
             if (this.currentState == CURRENT_STATE_PLAYING) {
-                if (url.equals(JCMediaManager.instance().mediaPlayer.getDataSource())) {
+                if (isCurrentPlayingUrl(url)) {
                     this.startWindowTiny();//如果列表中,滑动过快,在还没来得及onScroll的时候自己已经被复用了
                 }
             }
@@ -162,14 +162,10 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
         this.objects = objects;
         this.currentScreen = screen;
         setUiWitStateAndScreen(CURRENT_STATE_NORMAL);
-        if (sameWithCurPlaying(url)) {//如果初始化了一个正在tinyWindow的前身,就应该监听它的滑动,如果显示就在这个listener中播放
+        if (isCurrentPlayingUrl(url)) {//如果初始化了一个正在tinyWindow的前身,就应该监听它的滑动,如果显示就在这个listener中播放
             JCVideoPlayerManager.putScrollListener(this);
         }
         return true;
-    }
-
-    protected boolean sameWithCurPlaying(String url) {
-        return TextUtils.equals(url, JCMediaManager.instance().mediaPlayer.getDataSource());
     }
 
     @Override
@@ -875,7 +871,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
     };
 
     public void release() {
-        if (sameWithCurPlaying(url) &&
+        if (isCurrentPlayingUrl(url) &&
                 (System.currentTimeMillis() - CLICK_QUIT_FULLSCREEN_TIME) > FULL_SCREEN_NORMAL_DELAY) {
             //如果正在全屏播放就不能手动调用release
             JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
@@ -886,16 +882,17 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
         }
     }
 
-    //isCurrentMediaListener and isCurrenPlayUrl should be two logic methods,isCurrentMediaListener is for different jcvd with same
-    //url when fullscreen or tiny screen. isCurrenPlayUrl is to find where is myself when back from tiny screen.
+    //isCurrentMediaListener and isCurrentPlayUrl should be two logic methods,isCurrentMediaListener is for different jcvd with same
+    //url when fullscreen or tiny screen. isCurrentPlayUrl is to find where is myself when back from tiny screen.
     //Sometimes they are overlap.
-    public boolean isCurrentMediaListener() {
-        return JCVideoPlayerManager.getFirst() != null
-                && JCVideoPlayerManager.getFirst() == this;
+    protected final boolean isCurrentMediaListener() {
+        JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
+        return first != null && first == this;
     }
 
-    public boolean isCurrenPlayingUrl() {
-        return url.equals(JCMediaManager.instance().mediaPlayer.getDataSource());
+
+    protected final boolean isCurrentPlayingUrl(String url) {
+        return TextUtils.equals(url, JCMediaManager.instance().mediaPlayer.getDataSource());
     }
 
     public static void releaseAllVideos() {
@@ -909,14 +906,17 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
     }
 
     public void onEvent(int type) {
-        if (JC_USER_EVENT != null && JC_USER_EVENT.get() != null && isCurrentMediaListener()) {
-            JC_USER_EVENT.get().onEvent(type, url, currentScreen, objects);
+        if (JC_USER_EVENT != null && isCurrentMediaListener()) {
+            JCUserAction jcUserAction = JC_USER_EVENT.get();
+            if (jcUserAction != null) {
+                jcUserAction.onEvent(type, url, currentScreen, objects);
+            }
         }
     }
 
     @Override
     public void onScrollChange() {//这里需要自己判断自己是 进入小窗,退出小窗,暂停还是播放
-        if (sameWithCurPlaying(url)) {
+        if (isCurrentPlayingUrl(url)) {
             JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
             if (first == null) return;
             if (first.getScreenType() == SCREEN_WINDOW_TINY) {
