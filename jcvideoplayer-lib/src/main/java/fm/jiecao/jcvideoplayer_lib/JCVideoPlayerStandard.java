@@ -78,7 +78,7 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
             } else if (currentScreen == SCREEN_LAYOUT_NORMAL
                     || currentScreen == SCREEN_LAYOUT_LIST) {
                 fullscreenButton.setImageResource(R.drawable.jc_enlarge);
-                backButton.setVisibility(View.INVISIBLE);
+                backButton.setVisibility(View.GONE);
                 tinyBackImageView.setVisibility(View.INVISIBLE);
             } else if (currentScreen == SCREEN_WINDOW_TINY) {
                 backButton.setVisibility(View.INVISIBLE);
