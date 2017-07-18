@@ -16,29 +16,29 @@ public class JCVideoPlayerManager {
     // 用来存放有播放操作的JCVideoPlayer， 存在正常模式，列表模式，全屏模式，小窗模式
     private static LinkedList<WeakReference<JCMediaPlayerListener>> LISTENER_LIST = new LinkedList<>();
 
-    static void putScrollListener(@NonNull JCMediaPlayerListener listener) {
+    public static void putScrollListener(@NonNull JCMediaPlayerListener listener) {
         if (listener.getScreenType() == JCVideoPlayer.SCREEN_WINDOW_TINY ||
                 listener.getScreenType() == JCVideoPlayer.SCREEN_WINDOW_FULLSCREEN) return;
         CURRENT_SCROLL_LISTENER = new WeakReference<>(listener);//每次setUp的时候都应该add
     }
 
-    static JCMediaPlayerListener getScrollListener() {
+    public static JCMediaPlayerListener getScrollListener() {
         if (CURRENT_SCROLL_LISTENER != null) {
             return CURRENT_SCROLL_LISTENER.get();
         }
         return null;
     }
 
-    static void clearScrollListener() {
+    public static void clearScrollListener() {
         CURRENT_SCROLL_LISTENER = null;
     }
 
-    static void putListener(@NonNull JCMediaPlayerListener listener) {
+    public static void putListener(@NonNull JCMediaPlayerListener listener) {
         LISTENER_LIST.push(new WeakReference<>(listener));
     }
 
     // 主要的过滤JCVideoPlayer被复用的case
-    static void checkAndPutListener(@NonNull JCMediaPlayerListener listener) {
+    public static void checkAndPutListener(@NonNull JCMediaPlayerListener listener) {
         if (listener.getScreenType() == JCVideoPlayer.SCREEN_WINDOW_TINY ||
                 listener.getScreenType() == JCVideoPlayer.SCREEN_WINDOW_FULLSCREEN) return;
         int index = -1;
@@ -55,18 +55,18 @@ public class JCVideoPlayerManager {
         }
     }
 
-    static JCMediaPlayerListener popListener() {
+    public static JCMediaPlayerListener popListener() {
         if (LISTENER_LIST.size() == 0) {
             return null;
         }
         return LISTENER_LIST.pop().get();
     }
 
-    static int listenerSize() {
+    public static int listenerSize() {
         return LISTENER_LIST.size();
     }
 
-    static boolean hasSameScreenTypeListener(int screenType) {
+    public static boolean hasSameScreenTypeListener(int screenType) {
         for (int i = 0; i < LISTENER_LIST.size(); i++) {
             JCMediaPlayerListener jcMediaPlayerListener = LISTENER_LIST.get(i).get();
             if (jcMediaPlayerListener != null
