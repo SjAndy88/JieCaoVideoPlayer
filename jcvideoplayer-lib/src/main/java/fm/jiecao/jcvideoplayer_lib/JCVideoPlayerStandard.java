@@ -1,6 +1,5 @@
 package fm.jiecao.jcvideoplayer_lib;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -19,6 +18,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -640,13 +640,14 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
     public void startDismissControlViewTimer() {
         cancelDismissControlViewTimer();
         DISMISS_CONTROL_VIEW_TIMER = new Timer();
-        mDismissControlViewTimerTask = new DismissControlViewTimerTask();
+        mDismissControlViewTimerTask = new DismissControlViewTimerTask(this);
         DISMISS_CONTROL_VIEW_TIMER.schedule(mDismissControlViewTimerTask, 2500);
     }
 
     public void cancelDismissControlViewTimer() {
         if (DISMISS_CONTROL_VIEW_TIMER != null) {
             DISMISS_CONTROL_VIEW_TIMER.cancel();
+            DISMISS_CONTROL_VIEW_TIMER.purge();
         }
         if (mDismissControlViewTimerTask != null) {
             mDismissControlViewTimerTask.cancel();
@@ -654,22 +655,29 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
 
     }
 
-    public class DismissControlViewTimerTask extends TimerTask {
+    private static class DismissControlViewTimerTask extends TimerTask {
+
+        WeakReference<JCVideoPlayerStandard> mJCVideoPlayerWeakReference;
+
+        public DismissControlViewTimerTask(JCVideoPlayerStandard jcVideoPlayer) {
+            mJCVideoPlayerWeakReference = new WeakReference<>(jcVideoPlayer);
+        }
 
         @Override
         public void run() {
-            if (currentState != CURRENT_STATE_NORMAL
-                    && currentState != CURRENT_STATE_ERROR
-                    && currentState != CURRENT_STATE_AUTO_COMPLETE) {
-                if (getContext() != null && getContext() instanceof Activity) {
-                    ((Activity) getContext()).runOnUiThread(new Runnable() {
+            final JCVideoPlayerStandard jcVideoPlayer = mJCVideoPlayerWeakReference.get();
+            if (jcVideoPlayer != null) {
+                if (jcVideoPlayer.currentState != CURRENT_STATE_NORMAL
+                        && jcVideoPlayer.currentState != CURRENT_STATE_ERROR
+                        && jcVideoPlayer.currentState != CURRENT_STATE_AUTO_COMPLETE) {
+                    jcVideoPlayer.mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            bottomContainer.setVisibility(View.INVISIBLE);
-                            topContainer.setVisibility(View.INVISIBLE);
-                            startButton.setVisibility(View.INVISIBLE);
-                            if (currentScreen != SCREEN_WINDOW_TINY) {
-                                bottomProgressBar.setVisibility(View.VISIBLE);
+                            jcVideoPlayer.bottomContainer.setVisibility(View.INVISIBLE);
+                            jcVideoPlayer.topContainer.setVisibility(View.INVISIBLE);
+                            jcVideoPlayer.startButton.setVisibility(View.INVISIBLE);
+                            if (jcVideoPlayer.currentScreen != SCREEN_WINDOW_TINY) {
+                                jcVideoPlayer.bottomProgressBar.setVisibility(View.VISIBLE);
                             }
                         }
                     });
