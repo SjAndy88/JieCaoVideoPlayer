@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(mSensorEventListener);
-        JCVideoPlayer.releaseAllVideos();
+        JCVideoPlayer.pauseCurVideo();
     }
 
     @Override

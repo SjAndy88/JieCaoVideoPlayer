@@ -50,7 +50,7 @@ public class ListViewViewpagerActivity extends AppCompatActivity implements View
     @Override
     protected void onPause() {
         super.onPause();
-        JCVideoPlayer.releaseAllVideos();
+        JCVideoPlayer.pauseCurVideo();
     }
 
     @Override

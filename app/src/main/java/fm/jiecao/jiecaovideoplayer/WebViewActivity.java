@@ -74,7 +74,7 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        JCVideoPlayer.releaseAllVideos();
+        JCVideoPlayer.pauseCurVideo();
     }
 
     @Override

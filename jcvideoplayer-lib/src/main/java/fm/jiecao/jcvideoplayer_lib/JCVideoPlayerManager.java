@@ -91,4 +91,11 @@ public class JCVideoPlayerManager {
             ll = popListener();
         }
     }
+
+    static void pauseVideo() {
+        JCMediaPlayerListener first = getFirst();
+        if (first != null) {
+            first.onPause();
+        }
+    }
 }

@@ -54,7 +54,7 @@ public class AutoTinyListActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        JCVideoPlayer.releaseAllVideos();
+        JCVideoPlayer.pauseCurVideo();
     }
 
     @Override

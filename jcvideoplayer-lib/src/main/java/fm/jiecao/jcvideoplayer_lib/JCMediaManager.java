@@ -41,7 +41,7 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
     int currentVideoHeight = 0;
     int lastState;
     int bufferPercent;
-    int backUpBufferState = -1;
+    int backupBufferState = -1;
     int videoRotation;
 
     private MediaHandler mMediaHandler;
