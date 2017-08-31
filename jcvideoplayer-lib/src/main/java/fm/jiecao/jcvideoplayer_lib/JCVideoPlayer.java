@@ -1187,5 +1187,11 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
 
     public abstract int getLayoutId();
 
+    public void showCustomView(View view) {
+        addView(view, -1);
+    }
 
+    public void hideCustomView(View view) {
+        removeView(view);
+    }
 }
