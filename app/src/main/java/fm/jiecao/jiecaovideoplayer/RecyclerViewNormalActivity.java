@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerManager;
+import fm.jiecao.jcvideoplayer_lib.manager.JCVideoPlayerManager;
 
 /**
  * Created by yujunkui on 16/8/29.
@@ -46,7 +46,7 @@ public class RecyclerViewNormalActivity extends AppCompatActivity {
                     JCVideoPlayer videoPlayer = (JCVideoPlayer) JCVideoPlayerManager.getFirst();
                     if (videoPlayer != null
                             && ((ViewGroup) view).indexOfChild(videoPlayer) != -1
-                            && videoPlayer.currentState == JCVideoPlayer.CURRENT_STATE_PLAYING) {
+                            && videoPlayer.currentState != JCVideoPlayer.CURRENT_STATE_NORMAL) {
                         JCVideoPlayer.releaseAllVideos();
                     }
                 }

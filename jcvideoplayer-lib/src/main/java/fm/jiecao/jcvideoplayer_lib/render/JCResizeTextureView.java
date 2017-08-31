@@ -1,4 +1,4 @@
-package fm.jiecao.jcvideoplayer_lib;
+package fm.jiecao.jcvideoplayer_lib.render;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -82,8 +82,8 @@ public class JCResizeTextureView extends TextureView {
     /*
         在明确TextureView已经被填充Image数据的情况下调用
      */
-    public void setHasUpdated() {
-        hasUpdated = true;
+    public void setHasUpdated(boolean has) {
+        hasUpdated = has;
     }
 
     @SuppressWarnings({"StatementWithEmptyBody", "SuspiciousNameCombination"})

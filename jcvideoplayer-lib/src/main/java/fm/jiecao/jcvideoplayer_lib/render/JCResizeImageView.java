@@ -1,10 +1,11 @@
-package fm.jiecao.jcvideoplayer_lib;
+package fm.jiecao.jcvideoplayer_lib.render;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.widget.ImageView;
 
 /**
  * <p>参照Android系统的VideoView的onMeasure方法
@@ -14,7 +15,8 @@ import android.util.Log;
  * Created by Nathen
  * On 2016/06/02 00:01
  */
-public class JCResizeImageView extends AppCompatImageView {
+@SuppressLint("AppCompatCustomView")
+public class JCResizeImageView extends ImageView {
     protected static final String TAG = "JCResizeImageView";
     protected static final boolean DEBUG = false;
 

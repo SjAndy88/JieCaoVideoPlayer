@@ -1,4 +1,4 @@
-package fm.jiecao.jcvideoplayer_lib;
+package fm.jiecao.jcvideoplayer_lib.listener;
 
 /**
  * Created by Nathen on 16/7/26.
@@ -18,7 +18,7 @@ public interface JCMediaPlayerListener {
 
     void onInfo(int what, int extra);
 
-    void onVideoSizeChanged();
+    void onVideoSizeChanged(int width, int height);
 
     void goBackThisListener();
 
@@ -37,5 +37,7 @@ public interface JCMediaPlayerListener {
     void autoQuitFullscreen();
 
     void onPause();
+
+    long getGroupId();
 
 }

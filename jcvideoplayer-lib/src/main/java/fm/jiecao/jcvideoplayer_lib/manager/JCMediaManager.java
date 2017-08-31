@@ -1,6 +1,5 @@
-package fm.jiecao.jcvideoplayer_lib;
+package fm.jiecao.jcvideoplayer_lib.manager;
 
-import android.graphics.Point;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -9,11 +8,12 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Surface;
-import android.view.TextureView;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
 
+import fm.jiecao.jcvideoplayer_lib.listener.JCMediaPlayerListener;
+import fm.jiecao.jcvideoplayer_lib.render.JCVideoRenderLayout;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -24,7 +24,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * Created by Nathen
  * On 2015/11/30 15:39
  */
-class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.OnCompletionListener,
+public class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.OnCompletionListener,
         IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnSeekCompleteListener, IMediaPlayer.OnErrorListener,
         IMediaPlayer.OnVideoSizeChangedListener, IMediaPlayer.OnInfoListener {
     private static final String TAG = "JieCaoVideoPlayer";
@@ -34,20 +34,13 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
     private static final int HANDLER_RELEASE = 2;
 
     private static volatile JCMediaManager sJCMediaManager;
-    private WeakReference<TextureView> mTextureViewWeakReference;
-    IjkMediaPlayer mediaPlayer;
+    private WeakReference<JCVideoRenderLayout> mJCRenderLayoutWR;
+    public IjkMediaPlayer mediaPlayer;
 
-    int currentVideoWidth = 0;
-    int currentVideoHeight = 0;
-    int lastState;
-    int bufferPercent;
-    int backupBufferState = -1;
-    int videoRotation;
-
+    private Handler mMainHandler;
     private MediaHandler mMediaHandler;
-    private Handler mainThreadHandler;
 
-    static JCMediaManager instance() {
+    public static JCMediaManager instance() {
         if (sJCMediaManager == null) {
             synchronized (JCMediaManager.class) {
                 if (sJCMediaManager == null) {
@@ -60,22 +53,19 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
 
     private JCMediaManager() {
         mediaPlayer = new IjkMediaPlayer();
+        mJCRenderLayoutWR = new WeakReference<>(null);
+        mMainHandler = new Handler(Looper.getMainLooper());
         HandlerThread mediaHandlerThread = new HandlerThread(TAG);
         mediaHandlerThread.start();
-        mMediaHandler = new MediaHandler((mediaHandlerThread.getLooper()));
-        mainThreadHandler = new Handler();
+        mMediaHandler = new MediaHandler(mediaHandlerThread.getLooper());
     }
 
-    public void setTextureView(TextureView view) {
-        mTextureViewWeakReference = new WeakReference<>(view);
+    public void setVideoRenderLayout(JCVideoRenderLayout view) {
+        mJCRenderLayoutWR = new WeakReference<>(view);
     }
 
-    Point getVideoSize() {
-        if (currentVideoWidth != 0 && currentVideoHeight != 0) {
-            return new Point(currentVideoWidth, currentVideoHeight);
-        } else {
-            return null;
-        }
+    public JCVideoRenderLayout getVideoRenderLayout() {
+        return mJCRenderLayoutWR.get();
     }
 
     private class MediaHandler extends Handler {
@@ -90,8 +80,6 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
             switch (msg.what) {
                 case HANDLER_PREPARE:
                     try {
-                        currentVideoWidth = 0;
-                        currentVideoHeight = 0;
                         mediaPlayer.release();
                         mediaPlayer = new IjkMediaPlayer();
                         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -119,14 +107,11 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
                         if (holder.isValid()) {
                             Log.i(TAG, "set surface");
                             instance().mediaPlayer.setSurface(holder);
-                            mainThreadHandler.post(new Runnable() {
+                            mMainHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (mTextureViewWeakReference != null) {
-                                        TextureView textureView = mTextureViewWeakReference.get();
-                                        if (textureView != null) {
-                                            textureView.requestLayout();
-                                        }
+                                    if (mJCRenderLayoutWR.get() != null) {
+                                        mJCRenderLayoutWR.get().requestLayout();
                                     }
                                 }
                             });
@@ -142,7 +127,7 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
     }
 
 
-    void prepare(final String url, final Map<String, String> mapHeadData, boolean loop) {
+    public void prepare(final String url, final Map<String, String> mapHeadData, boolean loop) {
         if (TextUtils.isEmpty(url)) return;
         Message msg = new Message();
         msg.what = HANDLER_PREPARE;
@@ -150,13 +135,13 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
         mMediaHandler.sendMessage(msg);
     }
 
-    void releaseMediaPlayer() {
+    public void releaseMediaPlayer() {
         Message msg = new Message();
         msg.what = HANDLER_RELEASE;
         mMediaHandler.sendMessage(msg);
     }
 
-    void setDisplay(Surface holder) {
+    public void setDisplay(Surface holder) {
         Message msg = new Message();
         msg.what = HANDLER_DISPLAY;
         msg.obj = holder;
@@ -165,7 +150,7 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
 
     @Override
     public void onPrepared(IMediaPlayer mp) {
-        mainThreadHandler.post(new Runnable() {
+        mMainHandler.post(new Runnable() {
             @Override
             public void run() {
                 JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
@@ -178,7 +163,7 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
 
     @Override
     public void onCompletion(IMediaPlayer mp) {
-        mainThreadHandler.post(new Runnable() {
+        mMainHandler.post(new Runnable() {
             @Override
             public void run() {
                 JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
@@ -191,7 +176,7 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
 
     @Override
     public void onBufferingUpdate(IMediaPlayer mp, final int percent) {
-        mainThreadHandler.post(new Runnable() {
+        mMainHandler.post(new Runnable() {
             @Override
             public void run() {
                 JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
@@ -204,7 +189,7 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
 
     @Override
     public void onSeekComplete(IMediaPlayer mp) {
-        mainThreadHandler.post(new Runnable() {
+        mMainHandler.post(new Runnable() {
             @Override
             public void run() {
                 JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
@@ -217,7 +202,7 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
 
     @Override
     public boolean onError(IMediaPlayer mp, final int what, final int extra) {
-        mainThreadHandler.post(new Runnable() {
+        mMainHandler.post(new Runnable() {
             @Override
             public void run() {
                 JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
@@ -231,7 +216,7 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
 
     @Override
     public boolean onInfo(IMediaPlayer mp, final int what, final int extra) {
-        mainThreadHandler.post(new Runnable() {
+        mMainHandler.post(new Runnable() {
             @Override
             public void run() {
                 JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
@@ -244,15 +229,13 @@ class JCMediaManager implements IMediaPlayer.OnPreparedListener, IMediaPlayer.On
     }
 
     @Override
-    public void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
-        currentVideoWidth = mp.getVideoWidth();
-        currentVideoHeight = mp.getVideoHeight();
-        mainThreadHandler.post(new Runnable() {
+    public void onVideoSizeChanged(IMediaPlayer mp, final int width, final int height, int sar_num, int sar_den) {
+        mMainHandler.post(new Runnable() {
             @Override
             public void run() {
                 JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
                 if (first != null) {
-                    first.onVideoSizeChanged();
+                    first.onVideoSizeChanged(width, height);
                 }
             }
         });

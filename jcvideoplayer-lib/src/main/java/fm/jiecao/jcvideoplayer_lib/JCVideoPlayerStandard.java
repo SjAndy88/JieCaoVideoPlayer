@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +22,10 @@ import android.widget.Toast;
 import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import fm.jiecao.jcvideoplayer_lib.listener.JCControlViewListener;
+import fm.jiecao.jcvideoplayer_lib.listener.JCMediaPlayerListener;
+import fm.jiecao.jcvideoplayer_lib.manager.JCVideoPlayerManager;
 
 /**
  * Created by Nathen
@@ -37,9 +42,8 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
     public ImageView coverImageView;
     public ImageView tinyBackImageView;
 
-
+    protected JCControlViewListener mJCControlViewListener;
     protected DismissControlViewTimerTask mDismissControlViewTimerTask;
-
 
     public JCVideoPlayerStandard(Context context) {
         super(context);
@@ -63,7 +67,6 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
         thumbImageView.setOnClickListener(this);
         backButton.setOnClickListener(this);
         tinyBackImageView.setOnClickListener(this);
-
     }
 
     @Override
@@ -239,36 +242,46 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
     }
 
     public void onClickUiToggle() {
+        boolean isShowing = bottomContainer.getVisibility() == View.VISIBLE;
+
+        onControlViewToggle(!isShowing);
+
         if (currentState == CURRENT_STATE_PREPARING) {
-            if (bottomContainer.getVisibility() == View.VISIBLE) {
+            if (isShowing) {
                 changeUiToPreparingClear();
             } else {
                 changeUiToPreparingShow();
             }
         } else if (currentState == CURRENT_STATE_PLAYING) {
-            if (bottomContainer.getVisibility() == View.VISIBLE) {
+            if (isShowing) {
                 changeUiToPlayingClear();
             } else {
                 changeUiToPlayingShow();
             }
         } else if (currentState == CURRENT_STATE_PAUSE) {
-            if (bottomContainer.getVisibility() == View.VISIBLE) {
+            if (isShowing) {
                 changeUiToPauseClear();
             } else {
                 changeUiToPauseShow();
             }
         } else if (currentState == CURRENT_STATE_AUTO_COMPLETE) {
-            if (bottomContainer.getVisibility() == View.VISIBLE) {
+            if (isShowing) {
                 changeUiToCompleteClear();
             } else {
                 changeUiToCompleteShow();
             }
         } else if (currentState == CURRENT_STATE_PLAYING_BUFFERING_START) {
-            if (bottomContainer.getVisibility() == View.VISIBLE) {
+            if (isShowing) {
                 changeUiToPlayingBufferingClear();
             } else {
                 changeUiToPlayingBufferingShow();
             }
+        }
+    }
+
+    protected void onControlViewToggle(boolean isShowing) {
+        if (mJCControlViewListener != null) {
+            mJCControlViewListener.onControlUiToggle(isShowing);
         }
     }
 
@@ -501,7 +514,6 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
     }
 
     public void changeUiToError() {
-        clearCacheImage();
         switch (currentScreen) {
             case SCREEN_LAYOUT_NORMAL:
             case SCREEN_LAYOUT_LIST:
@@ -673,6 +685,7 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
                     jcVideoPlayer.mHandler.post(new Runnable() {
                         @Override
                         public void run() {
+                            jcVideoPlayer.onControlViewToggle(false);
                             jcVideoPlayer.bottomContainer.setVisibility(View.INVISIBLE);
                             jcVideoPlayer.topContainer.setVisibility(View.INVISIBLE);
                             jcVideoPlayer.startButton.setVisibility(View.INVISIBLE);

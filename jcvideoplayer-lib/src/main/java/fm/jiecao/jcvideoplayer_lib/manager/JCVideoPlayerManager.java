@@ -1,9 +1,13 @@
-package fm.jiecao.jcvideoplayer_lib;
+package fm.jiecao.jcvideoplayer_lib.manager;
 
 import android.support.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.LinkedList;
+
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
+import fm.jiecao.jcvideoplayer_lib.listener.JCMediaPlayerListener;
 
 /**
  * Put JCVideoPlayer into layout
@@ -34,7 +38,26 @@ public class JCVideoPlayerManager {
     }
 
     public static void putListener(@NonNull JCMediaPlayerListener listener) {
-        LISTENER_LIST.push(new WeakReference<>(listener));
+        boolean hasAdded = false;
+        long correlationId = listener.getGroupId();
+        Iterator<WeakReference<JCMediaPlayerListener>> iterator = LISTENER_LIST.iterator();
+        while (iterator.hasNext()) {
+            WeakReference<JCMediaPlayerListener> weakReference = iterator.next();
+            JCMediaPlayerListener jcListener = weakReference.get();
+            if (jcListener != null) {
+                if (jcListener.getGroupId() != correlationId) {
+                    jcListener.onCompletion();
+                    iterator.remove();
+                } else if (jcListener == listener) {
+                    hasAdded = true;
+                }
+            } else {
+                iterator.remove();
+            }
+        }
+        if (!hasAdded) {
+            LISTENER_LIST.push(new WeakReference<>(listener));
+        }
     }
 
     // 主要的过滤JCVideoPlayer被复用的case
@@ -43,9 +66,9 @@ public class JCVideoPlayerManager {
                 listener.getScreenType() == JCVideoPlayer.SCREEN_WINDOW_FULLSCREEN) return;
         int index = -1;
         for (int i = 0; i < LISTENER_LIST.size(); i++) {
-            JCMediaPlayerListener jcMediaPlayerListener = LISTENER_LIST.get(i).get();
-            if (jcMediaPlayerListener != null
-                    && jcMediaPlayerListener.getScreenType() == listener.getScreenType()) {
+            JCMediaPlayerListener jcListener = LISTENER_LIST.get(i).get();
+            if (jcListener != null
+                    && jcListener.getScreenType() == listener.getScreenType()) {
                 index = i;
                 break;
             }
@@ -84,7 +107,7 @@ public class JCVideoPlayerManager {
         return LISTENER_LIST.getFirst().get();
     }
 
-    static void completeAll() {
+    public static void completeAll() {
         JCMediaPlayerListener ll = popListener();
         while (ll != null) {
             ll.onCompletion();
@@ -92,7 +115,7 @@ public class JCVideoPlayerManager {
         }
     }
 
-    static void pauseVideo() {
+    public static void pauseVideo() {
         JCMediaPlayerListener first = getFirst();
         if (first != null) {
             first.onPause();

@@ -11,6 +11,9 @@ import com.squareup.picasso.Picasso;
 
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
+import fm.jiecao.jcvideoplayer_lib.listener.JCMediaPlayerListener;
+import fm.jiecao.jcvideoplayer_lib.listener.imp.SimpleJCPlayerStateListener;
+import fm.jiecao.jcvideoplayer_lib.manager.JCVideoPlayerManager;
 
 /**
  * Created by Nathen
@@ -49,10 +52,10 @@ public class VideoListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         Log.e(TAG, "why you always getview");
 
-        ViewHolder viewHolder;
+        final ViewHolder viewHolder;
         if (null == convertView) {
             viewHolder = new ViewHolder();
             LayoutInflater mInflater = LayoutInflater.from(context);
@@ -71,6 +74,25 @@ public class VideoListAdapter extends BaseAdapter {
         Picasso.with(convertView.getContext())
                 .load(VideoConstant.videoThumbs[position])
                 .into(viewHolder.jcVideoPlayer.thumbImageView);
+
+        viewHolder.jcVideoPlayer.setPlayerListener(new SimpleJCPlayerStateListener() {
+            @Override
+            public boolean keepCurViewAlive() {
+                JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();
+                if (first != null && first instanceof JCVideoPlayerStandard) {
+                    JCVideoPlayerStandard jcVideoPlayer = (JCVideoPlayerStandard) first;
+                    jcVideoPlayer.setUp(
+                            VideoConstant.videoUrls[position + 1], jcVideoPlayer.getScreenType(),
+                            VideoConstant.videoTitles[position + 1]);
+                    jcVideoPlayer.startButton.performClick();
+                    Picasso.with(jcVideoPlayer.getContext())
+                            .load(VideoConstant.videoThumbs[position + 1])
+                            .into(jcVideoPlayer.thumbImageView);
+                    return true;
+                }
+                return false;
+            }
+        });
         return convertView;
     }
 
