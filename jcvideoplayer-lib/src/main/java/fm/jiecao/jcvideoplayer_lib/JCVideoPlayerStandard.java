@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -665,6 +664,10 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
             mDismissControlViewTimerTask.cancel();
         }
 
+    }
+
+    public void setJCControlViewListener(JCControlViewListener JCControlViewListener) {
+        mJCControlViewListener = JCControlViewListener;
     }
 
     private static class DismissControlViewTimerTask extends TimerTask {

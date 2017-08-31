@@ -75,7 +75,7 @@ public class VideoListAdapter extends BaseAdapter {
                 .load(VideoConstant.videoThumbs[position])
                 .into(viewHolder.jcVideoPlayer.thumbImageView);
 
-        viewHolder.jcVideoPlayer.setPlayerListener(new SimpleJCPlayerStateListener() {
+        viewHolder.jcVideoPlayer.setPlayerStateListener(new SimpleJCPlayerStateListener() {
             @Override
             public boolean keepCurViewAlive() {
                 JCMediaPlayerListener first = JCVideoPlayerManager.getFirst();

@@ -117,7 +117,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
 
     private boolean needPauseVideo;
 
-    private JCPlayerStateListener mPlayerListener;
+    private JCPlayerStateListener mPlayerStateListener;
 
     // 状态记录
     public static int sLastState;
@@ -168,8 +168,8 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
         this.enableTiny = enableTiny;
     }
 
-    public void setPlayerListener(JCPlayerStateListener playerListener) {
-        mPlayerListener = playerListener;
+    public void setPlayerStateListener(JCPlayerStateListener playerStateListener) {
+        mPlayerStateListener = playerStateListener;
     }
 
     public boolean setUp(String url, int screen, Object... objects) {
@@ -500,8 +500,8 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
         setUiWitStateAndScreen(CURRENT_STATE_AUTO_COMPLETE);
 
         boolean keepAlive = false;
-        if (mPlayerListener != null) {
-            keepAlive = mPlayerListener.keepCurViewAlive();
+        if (mPlayerStateListener != null) {
+            keepAlive = mPlayerStateListener.keepCurViewAlive();
         }
         if (!keepAlive) {
             if (!isOneScreenTypeLive()) {
@@ -806,7 +806,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
             jcVideoPlayer.mOriginalOrientation = this.mOriginalOrientation;
             jcVideoPlayer.setUp(url, JCVideoPlayerStandard.SCREEN_WINDOW_FULLSCREEN, objects);
             jcVideoPlayer.setUiWitStateAndScreen(currentState);
-            jcVideoPlayer.setPlayerListener(mPlayerListener);
+            jcVideoPlayer.setPlayerStateListener(mPlayerStateListener);
             jcVideoPlayer.restoreVideoRenderView(emptyRenderContainer());
             jcVideoPlayer.mGroupId = mGroupId;
 
@@ -838,7 +838,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
             vp.addView(jcVideoPlayer, lp);
             jcVideoPlayer.setUp(url, JCVideoPlayer.SCREEN_WINDOW_TINY, objects);
             jcVideoPlayer.setUiWitStateAndScreen(currentState);
-            jcVideoPlayer.setPlayerListener(mPlayerListener);
+            jcVideoPlayer.setPlayerStateListener(mPlayerStateListener);
             jcVideoPlayer.restoreVideoRenderView(emptyRenderContainer());
             jcVideoPlayer.mGroupId = mGroupId;
 
