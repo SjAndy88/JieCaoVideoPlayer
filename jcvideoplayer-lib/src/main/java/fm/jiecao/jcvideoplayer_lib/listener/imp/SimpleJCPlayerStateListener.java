@@ -1,5 +1,6 @@
 package fm.jiecao.jcvideoplayer_lib.listener.imp;
 
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 import fm.jiecao.jcvideoplayer_lib.listener.JCPlayerStateListener;
 
 /**
@@ -7,37 +8,9 @@ import fm.jiecao.jcvideoplayer_lib.listener.JCPlayerStateListener;
  */
 
 public class SimpleJCPlayerStateListener implements JCPlayerStateListener {
-    @Override
-    public void onNormal() {
-
-    }
 
     @Override
-    public void onPreparing() {
-
-    }
-
-    @Override
-    public void onPlaying() {
-
-    }
-
-    @Override
-    public void onPause() {
-
-    }
-
-    @Override
-    public void onError() {
-
-    }
-
-    @Override
-    public void onAutoCompletion() {
-    }
-
-    @Override
-    public void onBuffering() {
+    public void onStateChange(JCVideoPlayer videoPlayer, int state) {
 
     }
 
