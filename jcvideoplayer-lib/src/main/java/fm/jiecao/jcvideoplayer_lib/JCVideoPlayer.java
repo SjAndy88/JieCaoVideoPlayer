@@ -424,6 +424,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
 
     public void setUiWithStateAndScreen(int state) {
         currentState = state;
+        dispatchPlayerState(state);
         switch (currentState) {
             case CURRENT_STATE_NORMAL:
                 if (isCurrentMediaListener()) {
